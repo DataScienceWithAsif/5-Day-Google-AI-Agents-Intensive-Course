@@ -1,0 +1,113 @@
+Tool Types:
+	I) function/custom tools (explicitly defined by user in python and wrap up in Function Tool to represent a tool that an agent can use)
+	II) Built-in tools provided by framework for defined tasks such as GoogleSearch Tool by  Google ADK framework.
+	III) Agent Tool ---> Building a specialized agent that perform a specific function and then wrap up in AgentTool and passing that to Main Agent as tool.
+
+MCP: 
+	It is a Standarized way to connect LLM to external resources, tools that are built by third-party.
+	i- Host ---> is main application that has agent and can use tools
+	ii- MCP Client ---> It acts as the connector, it connects the Host to MCP servers and maintain also server session and provide method to access the MCP Server tools.
+	iii- MCP Server ---> The server that keeps resources and tools that are built someone else and anyone can use them.
+Challanges:
+	Context Overflow/overload ---> If we kept multiple tools suchs as hundreds thousands of tools in main host, pass them in agent context,
+				so every tool name, description and schema of input and output all are kept in LLM context window so these cause many issues such as 
+				money for more tokens and it also lessons LLM capability for reasoning and challanges in selecting best tool.
+	Possible solution:
+			RAG:
+				if we kept all tools in vector database and extract neccessary tool`s input/output schema that performs needed task for 
+				acheiving agent goal, after quering agent (semantic search) to the vector database such as pinecone, it will give 3-5 similar necessary tools 
+				that will be given to context of LLM that will solve the issue of Conext oveloading, the just main reason is managing vector database.
+	
+	Confused Deputy(privileged server tricked by un-privileged input):
+		Prompt Injection(via malicious tool defination): MCP server itself doesn't provide security, method for authentication and authorization. the one who has low access and 
+				by tricky prompt (prompt-injection), tricks LLM to exceute a sensitive operation by using mcp tool, and it cuases many issues
+				as that one can also excute many sensitive transactions and tasks
+	Possible Solution:
+			Building security layer around the mcp tools, when someone want to access these sensitive tools by prompt-injection, 
+			the security layer first authenticates that user and checks his authorization if it passes that layer then that sensitive tool will be executed,
+			this protects the execution of sensitive operations/tools without proper access.
+	Securing the AI Future:
+			- key mitigations
+			- API Gateways
+			- Human-in-the-loop
+			- Least Privilege 
+
+
+
+Day2 Whitepaper Report:
+		A Beginner's Guide to AI Agent Tools
+
+1. Introduction: Why Do AI Agents Need Tools?
+
+On its own, even the most advanced AI model is just a pattern prediction engine. It can do amazing things like write code or pass exams, but its knowledge is frozen in time—it only knows about the data it was trained on. It can't look up today's weather, check your calendar, or send an email. It has no connection to the real, live world.
+
+This is where tools come in. Tools are the solution to this fundamental limitation. You can think of them as an AI agent's "eyes" and "hands", allowing it to perceive new information and act on the world beyond its training data.
+
+Broadly speaking, tools give an agent two primary functions:
+
+* To Know Something: This allows the agent to retrieve new, real-time data. For example, it could use a tool to get the current weather forecast or look up product information in a company database.
+* To Do Something: This allows the agent to perform an action in the real world. For instance, it could use a tool to send an email, post a message, or interact with an external program.
+
+To build effective agents, we first need to understand the different kinds of tools available in our toolkit. Let's start with the three most fundamental types you'll encounter.
+
+2. The Three Main Types of Tools for AI Agents
+
+While tools can be designed in many ways, they generally fall into three main categories. This guide will cover the three most common ones: Function Tools, Built-in Tools, and Agent Tools.
+
+2.1. Function Tools: The Custom-Built Toolbox
+
+Function Tools are external functions that a developer creates and defines for the model to use.
+
+The core concept is that the developer provides the AI with a "manual" for each custom tool. This manual includes the tool's name, what information it needs to work (its parameters), and a clear description of what it does.
+
+The primary benefit of Function Tools is complete control and customization. They allow developers to connect an AI directly to their specific programs, databases, or APIs.
+
+For example: Imagine a developer creates a set_light_values tool. They write instructions telling the AI that this tool can change a room's light brightness and color. When a user says, "Make the lights warmer and dimmer," the AI knows to use this specific tool to get the job done.
+
+2.2. Built-in Tools: The Ready-to-Use Power-Ups
+
+Built-in Tools are pre-made functionalities offered directly by the foundation model's provider (like Google).
+
+The key idea here is that the developer doesn't need to create these tools from scratch. The definitions and underlying code are handled "behind the scenes" by the provider.
+
+The primary benefit of Built-in Tools is convenience. They allow a developer to leverage powerful, common capabilities like web search or code execution without having to build them.
+
+For example: A developer can use Google's built-in url_context tool. If a user provides two links to chicken recipes and asks to compare them, the AI can use this tool to "read" the web pages and find the differences in ingredients and cooking times, without the developer having to write any web-scraping code. Other powerful built-in tools can include the ability to perform a Google Search to ground its answers in real-time information or even execute code to solve a programming problem.
+
+2.3. Agent Tools: The Specialist Team
+
+An Agent Tool is a complete, self-contained AI agent that can be used as a tool by another, "primary" agent.
+
+The core concept is delegation. This allows a main agent to hand off specific, specialized tasks to a sub-agent while maintaining overall control of the conversation.
+
+The primary benefit is specialization and organization. This is like having a manager agent who can call on different expert agents from its team to handle specific requests.
+
+For example: A developer could create a main user_advice_agent and give it an Agent Tool called capital_agent. The capital_agent only does one thing: it knows the capital city of any country or state. If a user asks the main agent, "What's the capital of Tennessee?", the main agent passes that question to its specialist capital_agent to get the answer.
+
+Seeing these tool types side-by-side can help solidify the key differences. The following table breaks them down for easy comparison.
+
+3. At a Glance: Comparing the Tool Types
+
+Tool Type	Who Creates It?	Primary Benefit for a Beginner
+Function Tools	The developer	Full control to connect AI to custom systems.
+Built-in Tools	The AI model provider	Easy access to powerful, pre-built features.
+Agent Tools	The developer (as another agent)	Creates a team of specialized agents for complex tasks.
+
+Now that we understand what the different types of tools are, let's look at the kinds of jobs they can perform.
+
+4. What Kinds of Jobs Can Tools Do? A Quick Overview
+
+Tools can be categorized by the type of job they perform. Here are four common categories of tool functions.
+
+* Information Retrieval: These tools fetch data from various sources, such as searching through company documents or querying a database for a customer's order history.
+* Action / Execution: These tools perform real-world operations, like sending an email, posting a message, initiating code execution, or controlling physical devices.
+* System / API Integration: These tools connect to other software systems, such as interacting with Google Workspace apps (e.g., Gmail, Drive, Calendar) or integrating with third-party services.
+* Human-in-the-Loop: These tools facilitate collaboration between the AI and a person, such as asking a user for clarification on a vague request or seeking approval before executing a critical action.
+
+These categories provide a mental framework for thinking about the vast range of capabilities you can give to an AI agent.
+
+5. Conclusion: Your Foundation for Understanding
+
+As we've seen, tools are what transform AI models from simple pattern predictors into powerful agents that can perceive, reason, and act in the world. They are the essential link that allows an AI to go beyond its training data to fetch new information and perform useful tasks.
+
+By understanding the three main types of tools—Function Tools, Built-in Tools, and Agent Tools—you now have a solid foundation for understanding how to select and use the right tools for any task on your journey into building with AI agents.
